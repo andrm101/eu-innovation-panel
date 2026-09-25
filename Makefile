@@ -43,7 +43,7 @@ p3:
 
 p4:
 	@echo "=== Phase 4: Dimensionality Reduction ==="
-	$(UV) run $(PYTHON) $(SCRIPTS)/p4_pca_features.py
+	$(UV) run $(PYTHON) $(SCRIPTS)/p4_pca_scores.py
 
 p5:
 	@echo "=== Phase 5: Clustering ==="
@@ -63,11 +63,24 @@ dashboard:
 	$(UV) run $(PYTHON) dashboard/app.py
 
 # ── Reproducibility ───────────────────────────────────────────────────────────
+# All of these are bind-mounted (not just data/raw + outputs) because the
+# pipeline scripts write directly to repo-relative paths (data/bronze,
+# data/silver, data/gold, analysis, figures, profiles, manuscript, reports) --
+# an earlier version of this target only mounted data/raw and an unused
+# outputs/ directory nothing writes to, so `docker run --rm` silently
+# discarded every actual pipeline artifact on container exit.
 reproduce:
 	docker build -t eu-innov:latest .
 	docker run --rm \
 		-v "$$(pwd)/data/raw:/app/data/raw:ro" \
-		-v "$$(pwd)/outputs:/app/outputs" \
+		-v "$$(pwd)/data/bronze:/app/data/bronze" \
+		-v "$$(pwd)/data/silver:/app/data/silver" \
+		-v "$$(pwd)/data/gold:/app/data/gold" \
+		-v "$$(pwd)/analysis:/app/analysis" \
+		-v "$$(pwd)/figures:/app/figures" \
+		-v "$$(pwd)/profiles:/app/profiles" \
+		-v "$$(pwd)/manuscript:/app/manuscript" \
+		-v "$$(pwd)/reports:/app/reports" \
 		eu-innov:latest make pipeline
 
 # ── Audit ─────────────────────────────────────────────────────────────────────

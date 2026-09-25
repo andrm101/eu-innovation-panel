@@ -49,6 +49,18 @@ raw file bytes — pyarrow embeds non-data metadata (e.g. write timestamps)
 that differs between two numerically-identical runs, which would otherwise
 cause the hash check to falsely fail on a reproducible pipeline.
 
+**Generate the reference hash in the same environment you'll verify against.**
+Content-hashing uses `df.to_csv()`, which is stable across repeated runs
+*within* one pandas/pyarrow version but not guaranteed byte-identical *across*
+different versions (e.g. host Python vs. the Docker image, or two Docker image
+versions) — float formatting has changed between pandas releases before. This
+was confirmed directly: hashes generated on the host and verified inside the
+container (numerically-equal data, different pandas version) mismatched, while
+hashes generated and verified within the same container image matched. Always
+regenerate `expected_hashes.json` from inside `eu-innov:latest` if you intend
+to verify future container runs, and separately from the host if you intend to
+verify host-run (`make pipeline` without Docker) reproductions.
+
 ## 4. Estimated Runtime per Phase
 
 | Phase | Estimated time |
