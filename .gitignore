@@ -1,0 +1,35 @@
+# Environment
+.venv/
+*.egg-info/
+__pycache__/
+*.pyc
+.env
+
+# Data — raw committed; generated layers excluded
+data/bronze/
+data/silver/
+data/gold/
+data/processed/
+
+# Generated artifacts
+analysis/*.csv
+analysis/*.json
+analysis/*.md
+!analysis/.gitkeep
+figures/eda/
+figures/clustering/
+profiles/*.md
+profiles/*.pdf
+profiles/*.json
+!profiles/.gitkeep
+manuscript/main.pdf
+pipeline_audit.json
+expected_hashes.json
+seeds_manifest.json
+
+# Notebooks checkpoints
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db

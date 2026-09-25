@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        run: pip install uv==0.1.42
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Ruff lint
+        run: uv run ruff check .
+
+      - name: Black format check
+        run: uv run black --check .
+
+      - name: Schema import check
+        run: |
+          uv run python -c "
+          from src.contracts.silver_schema import silver_schema
+          from src.contracts.gold_schema import gold_schema
+          print('schemas: OK')
+          "
+
+      - name: Vocab guard (seed check on scripts dir — empty at CI scaffold)
+        run: |
+          uv run python -c "
+          from src.utils.vocab_guard import check
+          check('This is an exploratory, non-causal study associated with regional variation.')
+          print('vocab_guard: OK')
+          "
+
+      - name: Run tests
+        run: uv run pytest -v --tb=short

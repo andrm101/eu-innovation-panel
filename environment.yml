@@ -1,0 +1,41 @@
+name: eu-innovation-panel
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - gdal=3.8.*
+  - proj=9.3.*
+  - libspatialindex
+  - pip
+  - pip:
+    - pandas>=2.2,<3
+    - geopandas>=0.14,<1
+    - pyarrow>=15,<16
+    - duckdb>=0.10,<1
+    - pandera>=0.18,<1
+    - scikit-learn>=1.4,<2
+    - statsmodels>=0.14,<1
+    - scipy>=1.12,<2
+    - pingouin>=0.5,<1
+    - pyampute>=0.1,<1
+    - hdbscan>=0.8,<1
+    - esda>=2.5,<3
+    - libpysal>=4.9,<5
+    - plotly>=5.20,<6
+    - matplotlib>=3.8,<4
+    - seaborn>=0.13,<1
+    - kaleido==0.2.1
+    - dash>=2.16,<3
+    - structlog>=23.3,<25
+    - jinja2>=3.1,<4
+    - pypdf>=4.0,<5
+    - habanero>=1.2,<2
+    - ruff>=0.3,<1
+    - black>=24,<25
+    - pre-commit>=3.7,<4
+    - pytest>=8.0,<9
+    - requests>=2.31,<3
+    - python-dotenv>=1.0,<2
+    - ipykernel>=6.29,<7
+    - jupyter>=1.0,<2

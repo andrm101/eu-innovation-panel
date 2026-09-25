@@ -1,0 +1,39 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.7
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/psf/black
+    rev: 24.4.2
+    hooks:
+      - id: black
+        language_version: python3.11
+
+  - repo: local
+    hooks:
+      - id: vocab-guard
+        name: Vocabulary guard (no causal/evaluative language)
+        entry: python src/utils/vocab_guard.py
+        language: python
+        types: [markdown, text]
+        files: \.(md|txt|rst|csv)$
+        pass_filenames: true
+
+      - id: seed-check
+        name: Seed check (random_state=42 required)
+        entry: python src/utils/seed_check.py
+        language: python
+        types: [python]
+        exclude: ^(src/utils/|tests/|\.venv/)
+        pass_filenames: false
+        args: [scripts/]
+
+      - id: schema-check
+        name: Schema contracts importable
+        entry: python -c "from src.contracts.silver_schema import silver_schema; from src.contracts.gold_schema import gold_schema; print('schemas OK')"
+        language: python
+        pass_filenames: false
+        always_run: true
