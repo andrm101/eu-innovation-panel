@@ -26,11 +26,55 @@ EXPECTED_HASHES_FILE = ROOT / "expected_hashes.json"
 
 
 def sha256_file(path: Path) -> str:
+    """Content hash for reproducibility checking.
+
+    Parquet files are hashed on their canonical data content (a deterministic
+    CSV serialization), not raw file bytes -- pyarrow embeds non-data metadata
+    (e.g. a write timestamp) that differs between two runs of the identical
+    pipeline with the identical seed, which made raw-byte hashing falsely FAIL
+    on runs that produced numerically identical output (verified directly:
+    re-running scripts/p4_pca_scores.py twice in a row on unchanged inputs
+    produced two files with different sha256 but zero differing cell values).
+    Everything else (PDFs, etc.) is hashed on raw bytes as before.
+    """
+    if path.suffix == ".parquet":
+        import pandas as pd
+        df = pd.read_parquet(path)
+        content = df.to_csv(index=True).encode("utf-8")
+        return hashlib.sha256(content).hexdigest()
+
     h = hashlib.sha256()
     with open(path, "rb") as f:
         for chunk in iter(lambda: f.read(65536), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+def generate_expected_hashes() -> dict:
+    """Compute sha256 for every tracked artifact and write expected_hashes.json.
+
+    Run this once a pipeline output is considered a trusted reference (e.g.
+    after a full `make reproduce` run whose results have been reviewed) --
+    every subsequent `make audit` / --mode=hashes run then verifies the
+    current artifacts still match this frozen reference.
+    """
+    import glob as glob_mod
+
+    targets = list(GOLD_ARTIFACTS)
+    targets += sorted(str(Path(p).relative_to(ROOT)) for p in glob_mod.glob(str(ROOT / PROFILE_GLOB)))
+    targets += [MANUSCRIPT_PDF]
+
+    hashes = {}
+    missing = []
+    for rel_path in targets:
+        p = ROOT / rel_path
+        if p.exists():
+            hashes[rel_path] = sha256_file(p)
+        else:
+            missing.append(rel_path)
+
+    EXPECTED_HASHES_FILE.write_text(json.dumps(hashes, indent=2, sort_keys=True))
+    return {"written": str(EXPECTED_HASHES_FILE), "n_hashed": len(hashes), "missing": missing}
 
 
 def run_hash_check() -> dict:
@@ -113,6 +157,10 @@ def main(mode: str = "full") -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=["full", "hashes", "seeds"], default="full")
+    parser.add_argument("--mode", choices=["full", "hashes", "seeds", "generate-hashes"], default="full")
     args = parser.parse_args()
+    if args.mode == "generate-hashes":
+        result = generate_expected_hashes()
+        print(json.dumps(result, indent=2))
+        sys.exit(0)
     main(args.mode)

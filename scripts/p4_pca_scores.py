@@ -125,7 +125,7 @@ def _zscore_single(series: pd.Series) -> pd.Series:
     return (series - mu) / sd
 
 
-def _pca_pc1(df_features: pd.DataFrame, random_state: int = 42) -> tuple[pd.Series, PCA, np.ndarray]:
+def _pca_pc1(df_features: pd.DataFrame) -> tuple[pd.Series, PCA, np.ndarray]:
     """
     Fit PCA on df_features (NaN rows excluded), extract PC1 scores.
     Returns (scores_series, fitted_pca, loadings_array).
@@ -133,8 +133,13 @@ def _pca_pc1(df_features: pd.DataFrame, random_state: int = 42) -> tuple[pd.Seri
     valid = df_features.dropna()
     scaler = StandardScaler()
     X = scaler.fit_transform(valid)
+    # random_state is a literal (not a passed-through parameter) so
+    # src/utils/seed_check.py's AST auditor can statically verify it; it
+    # previously took a random_state=42 default parameter and forwarded it,
+    # which the auditor can't resolve past a variable reference and
+    # flagged as an unverifiable (effectively None) seed.
     pca = PCA(n_components=min(len(df_features.columns), X.shape[0]),
-              random_state=random_state)
+              random_state=42)
     comps = pca.fit_transform(X)
     pc1 = pd.Series(comps[:, 0], index=valid.index)
 

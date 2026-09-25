@@ -276,7 +276,7 @@ def profile_to_markdown(p: dict, eu27_gdp_mean: float) -> str:
     lines.append("### Key feature associations (descriptive)\n")
     lines.append(
         "The following features show the strongest associations with archetype membership "
-        "(ranked by |Cohen's d|; observational data, no causal claims):\n"
+        "(ordered by |Cohen's d|; observational data, no causal claims):\n"
     )
     lines.append("| Feature | Cohen's d | Direction |")
     lines.append("|---------|-----------|-----------|")

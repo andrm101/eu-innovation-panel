@@ -1,8 +1,5 @@
 # Reproducing the EU Regional Innovation Panel Analysis
 
-> This file will be completed in Phase 10. Stubs are provided now so the
-> structure is committed from the start.
-
 ## 1. Prerequisites
 
 - Docker Desktop ≥ 4.28 (free for personal/academic use)
@@ -34,12 +31,23 @@ Expected output: all artifacts in `data/gold/`, `profiles/`, `analysis/`, `manus
 |---|---|---|
 | Silver panel | `data/silver/region_profiles_silver.parquet` | 230-240 rows × 40+ cols |
 | Gold panel | `data/gold/region_profiles_gold.parquet` | + PCA scores + archetypes |
-| Cluster diagnostics | `analysis/clustering_metrics.json` | Silhouette, ARI, CH, DB |
-| Regional profiles | `profiles/<NUTS2_code>.pdf` | 12-15 files |
-| Manuscript | `manuscript/main.pdf` | Draft |
+| Cluster diagnostics | `analysis/p5b_cluster_summary.csv` | Silhouette, ARI |
+| Regional profiles (data) | `profiles/p8_archetype_profiles.md`, `.json`, `p8_region_table.csv` | Per-archetype writeups and a 242-region table |
+| Manuscript | `reports/p9_manuscript.md` | 4,341-word draft (Markdown; not yet rendered to PDF) |
 | Dashboard | Launch with `make dashboard` | localhost:8050 |
 
-SHA-256 checksums: see `expected_hashes.json` (populated in Phase 10).
+**Not yet produced by this pipeline:** per-region `profiles/<NUTS2_code>.pdf`
+files and a rendered `manuscript/main.pdf` — P8/P9 currently stop at
+Markdown/CSV/JSON output; PDF rendering is a genuinely open gap, not part of
+this reproducibility audit's scope.
+
+SHA-256 checksums: see `expected_hashes.json`, generated via
+`python scripts/pipeline_audit.py --mode=generate-hashes` once a pipeline
+output is trusted as the reference (currently covers the Gold parquet only,
+for the reason above). Parquet files are hashed on canonical data content, not
+raw file bytes — pyarrow embeds non-data metadata (e.g. write timestamps)
+that differs between two numerically-identical runs, which would otherwise
+cause the hash check to falsely fail on a reproducible pipeline.
 
 ## 4. Estimated Runtime per Phase
 

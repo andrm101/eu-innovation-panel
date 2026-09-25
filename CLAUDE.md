@@ -77,7 +77,7 @@ Use `pathlib.Path(__file__).parent.parent` to resolve root; never hardcode absol
 | P7 — Dashboard | PASS (Streamlit app, 5 tabs; NUTS2 GeoJSON choropleth integrated; country choropleth in expander; runs on localhost:8501) |
 | P8 — Profiles | PASS (2 archetype profiles in MD+JSON; 242-region table with uncertain_assignment flag; NUTS2 codes fixed; A1: 108 regions/16 countries/82 transition; A2: 134 regions/25 countries/4 transition) |
 | P9 — Manuscript | PASS (4,341 words, 588 lines; YAML+abstract, 7 sections, 2 appendices; all numbers data-driven; GATE_P9=PASS) |
-| P10 — Audit | Not started |
+| P10 — Audit | PASS (2026-09-25: seed audit, schema import check, vocab guard, content-hash verification all green; two real bugs fixed along the way — p4_pca_scores.py had a false-positive-triggering `PCA(random_state=random_state)` passthrough the seed auditor couldn't statically resolve, and p8_profiles.py's archetype-profile template used the forbidden word "ranked". expected_hashes.json now covers data/gold/region_profiles_gold.parquet; profile PDFs and manuscript PDF are not yet rendered by this pipeline, so out of hash-audit scope for now — see REPRODUCE.md) |
 
 ## Key Design Decisions (locked)
 - Reference year: per-variable, latest year with ≥60% NUTS2 coverage (lowered from 80% due to structural sparsity)
