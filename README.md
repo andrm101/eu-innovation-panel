@@ -6,6 +6,22 @@
 
 This is the base study of a three-project research programme: its Gold layer feeds directly into [EU-MegaCampus-Siting](https://github.com/andrm101/eu-megacampus-siting)'s site-intelligence scoring.
 
+📖 **[Full abstract, results table, and hypothesis-testing methodology → project Wiki](https://github.com/andrm101/eu-innovation-panel/wiki)**
+
+---
+
+## Archetype taxonomy at a glance
+
+<p align="center">
+  <img src="figures/p5_cluster_scatter.png" width="48%" alt="k=2 archetype clusters in PCA score space" />
+  <img src="figures/p6b_lisa_map.png" width="48%" alt="LISA local spatial autocorrelation map" />
+</p>
+
+<p align="center">
+  <img src="figures/p6_cohens_d.png" width="48%" alt="Cohen's d effect sizes, FDR-corrected" />
+  <img src="figures/p6d_cospec_map.png" width="48%" alt="Sectoral co-specialisation typology map" />
+</p>
+
 ---
 
 ## Key findings
